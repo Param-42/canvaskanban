@@ -1,0 +1,32 @@
+/*
+ * Theme: Lavender
+ * Soft purple tones - light, friendly and a little different.
+ */
+
+.root {
+    -app-bg: #f6f3fb;
+    -app-toolbar: #ffffff;
+    -app-toolbar-text: #2f2440;
+    -app-surface: #ece6f7;
+    -app-column-header: #ffffff;
+    -app-list-bg: #f3eefa;
+    -app-card: #ffffff;
+    -app-card-hover: #faf7fe;
+    -app-border: #dcd2ec;
+    -app-text: #2f2440;
+    -app-text-muted: #6f6383;
+    -app-accent: #7c5cd6;
+    -app-accent-text: #ffffff;
+    -app-danger: #d64570;
+    -app-chip-text: #ffffff;
+    -app-priority-high: #d64570;
+    -app-priority-medium: #d98b1f;
+    -app-priority-low: #3f9b6d;
+    -app-drop-highlight: #e6dcfb;
+
+    -fx-base: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-text-background-color: #2f2440;
+    -fx-accent: #7c5cd6;
+    -fx-focus-color: #7c5cd6;
+}

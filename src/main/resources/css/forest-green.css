@@ -1,0 +1,32 @@
+/*
+ * Theme: Forest Green
+ * Light and natural, with a green accent instead of blue.
+ */
+
+.root {
+    -app-bg: #f0f4ef;
+    -app-toolbar: #ffffff;
+    -app-toolbar-text: #22301f;
+    -app-surface: #e6ece4;
+    -app-column-header: #ffffff;
+    -app-list-bg: #eef3ec;
+    -app-card: #ffffff;
+    -app-card-hover: #f6faf5;
+    -app-border: #cdd8cb;
+    -app-text: #22301f;
+    -app-text-muted: #5f6f5b;
+    -app-accent: #2f7d4f;
+    -app-accent-text: #ffffff;
+    -app-danger: #c0392b;
+    -app-chip-text: #ffffff;
+    -app-priority-high: #c0392b;
+    -app-priority-medium: #c9852b;
+    -app-priority-low: #3f8f5a;
+    -app-drop-highlight: #d7ebdd;
+
+    -fx-base: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-text-background-color: #22301f;
+    -fx-accent: #2f7d4f;
+    -fx-focus-color: #2f7d4f;
+}

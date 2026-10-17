@@ -1,0 +1,32 @@
+/*
+ * Theme: Midnight Blue
+ * Deep navy background with a bright blue accent - a dark theme with more colour.
+ */
+
+.root {
+    -app-bg: #0e1729;
+    -app-toolbar: #152441;
+    -app-toolbar-text: #e3ecff;
+    -app-surface: #101d33;
+    -app-column-header: #1b2f52;
+    -app-list-bg: #0f1d33;
+    -app-card: #17294a;
+    -app-card-hover: #1e3560;
+    -app-border: #24406e;
+    -app-text: #e3ecff;
+    -app-text-muted: #93a9cd;
+    -app-accent: #2f6fed;
+    -app-accent-text: #ffffff;
+    -app-danger: #ff6b6b;
+    -app-chip-text: #0b1526;
+    -app-priority-high: #ff7a7a;
+    -app-priority-medium: #ffc247;
+    -app-priority-low: #58d68d;
+    -app-drop-highlight: #23406f;
+
+    -fx-base: #17294a;
+    -fx-control-inner-background: #17294a;
+    -fx-text-background-color: #e3ecff;
+    -fx-accent: #2f6fed;
+    -fx-focus-color: #2f6fed;
+}

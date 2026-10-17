@@ -1,0 +1,32 @@
+/*
+ * Theme: Dark Mode
+ * Dark grey surfaces with a soft blue accent. Easy on the eyes at night.
+ */
+
+.root {
+    -app-bg: #1b1d21;
+    -app-toolbar: #26292f;
+    -app-toolbar-text: #e6e8eb;
+    -app-surface: #202329;
+    -app-column-header: #2b2f36;
+    -app-list-bg: #212429;
+    -app-card: #2b2f36;
+    -app-card-hover: #33383f;
+    -app-border: #3a3f47;
+    -app-text: #e6e8eb;
+    -app-text-muted: #9aa1ab;
+    -app-accent: #4f9cf9;
+    -app-accent-text: #10131a;
+    -app-danger: #f87171;
+    -app-chip-text: #10131a;
+    -app-priority-high: #f87171;
+    -app-priority-medium: #fbbf24;
+    -app-priority-low: #4ade80;
+    -app-drop-highlight: #2c3f5c;
+
+    -fx-base: #2b2f36;
+    -fx-control-inner-background: #2b2f36;
+    -fx-text-background-color: #e6e8eb;
+    -fx-accent: #4f9cf9;
+    -fx-focus-color: #4f9cf9;
+}

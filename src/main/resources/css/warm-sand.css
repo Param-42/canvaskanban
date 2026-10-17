@@ -1,0 +1,32 @@
+/*
+ * Theme: Warm Sand
+ * Cream and brown tones - a paper-like look that is comfortable for long sessions.
+ */
+
+.root {
+    -app-bg: #f7f1e8;
+    -app-toolbar: #fffaf3;
+    -app-toolbar-text: #3d3225;
+    -app-surface: #f0e6d8;
+    -app-column-header: #fffaf3;
+    -app-list-bg: #f6efe4;
+    -app-card: #fffdf9;
+    -app-card-hover: #fff8ef;
+    -app-border: #e0d2bd;
+    -app-text: #3d3225;
+    -app-text-muted: #857462;
+    -app-accent: #b4713a;
+    -app-accent-text: #ffffff;
+    -app-danger: #b3402f;
+    -app-chip-text: #fffdf9;
+    -app-priority-high: #b3402f;
+    -app-priority-medium: #c98a1f;
+    -app-priority-low: #4f7f4a;
+    -app-drop-highlight: #ecd9bf;
+
+    -fx-base: #fffaf3;
+    -fx-control-inner-background: #fffdf9;
+    -fx-text-background-color: #3d3225;
+    -fx-accent: #b4713a;
+    -fx-focus-color: #b4713a;
+}

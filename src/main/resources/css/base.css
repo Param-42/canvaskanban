@@ -1,0 +1,472 @@
+/*
+ * CanvasKanban - base.css
+ *
+ * This file contains all layout rules. It never contains a hard coded colour:
+ * every colour comes from a variable (for example -app-card) that the theme files
+ * in this folder define. A new theme is therefore just a new small CSS file.
+ *
+ * The values in ".root" below are the defaults (Minimal Light). The theme file is
+ * added to the window after this file, so it always wins.
+ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Cantarell", "Noto Sans", "DejaVu Sans", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13px;
+
+    /* --- CanvasKanban colours (overridden by every theme) --- */
+    -app-bg: #f4f5f7;
+    -app-toolbar: #ffffff;
+    -app-toolbar-text: #1f2937;
+    -app-surface: #eceef1;
+    -app-column-header: #ffffff;
+    -app-list-bg: #f7f8fa;
+    -app-card: #ffffff;
+    -app-card-hover: #f9fafb;
+    -app-border: #d9dde3;
+    -app-text: #1f2937;
+    -app-text-muted: #6b7280;
+    -app-accent: #2563eb;
+    -app-accent-text: #ffffff;
+    -app-danger: #dc2626;
+    -app-chip-text: #ffffff;
+    -app-priority-high: #dc2626;
+    -app-priority-medium: #d97706;
+    -app-priority-low: #16a34a;
+    -app-drop-highlight: #dbeafe;
+
+    /* --- JavaFX (Modena) variables, so dialogs and popups match too --- */
+    -fx-base: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-text-background-color: #1f2937;
+    -fx-accent: #2563eb;
+    -fx-focus-color: #2563eb;
+}
+
+/* ------------------------------------------------------------------ */
+/* Window                                                              */
+/* ------------------------------------------------------------------ */
+
+.app-root {
+    -fx-background-color: -app-bg;
+}
+
+.label {
+    -fx-text-fill: -app-text;
+}
+
+/* ------------------------------------------------------------------ */
+/* Toolbar                                                             */
+/* ------------------------------------------------------------------ */
+
+.toolbar {
+    -fx-background-color: -app-toolbar;
+    -fx-padding: 10 14 10 14;
+    -fx-spacing: 8;
+    -fx-alignment: center-left;
+    -fx-border-color: -app-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.toolbar .label {
+    -fx-text-fill: -app-toolbar-text;
+}
+
+.toolbar-caption {
+    -fx-font-size: 12px;
+    -fx-opacity: 0.75;
+}
+
+.board-header {
+    -fx-background-color: -app-bg;
+    -fx-padding: 14 16 4 16;
+}
+
+.board-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -app-text;
+}
+
+.board-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -app-text-muted;
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons                                                             */
+/* ------------------------------------------------------------------ */
+
+.button {
+    -fx-background-color: -app-card;
+    -fx-text-fill: -app-text;
+    -fx-border-color: -app-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 5 12 5 12;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -app-card-hover;
+}
+
+.button:pressed {
+    -fx-opacity: 0.85;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+.button.primary {
+    -fx-background-color: -app-accent;
+    -fx-border-color: -app-accent;
+    -fx-text-fill: -app-accent-text;
+    -fx-font-weight: bold;
+}
+
+.button.primary:hover {
+    -fx-opacity: 0.9;
+}
+
+.button.danger {
+    -fx-text-fill: -app-danger;
+    -fx-border-color: -app-danger;
+}
+
+.button.danger:hover {
+    -fx-opacity: 0.85;
+}
+
+.button.flat {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -app-text-muted;
+}
+
+.button.flat:hover {
+    -fx-background-color: -app-card-hover;
+    -fx-text-fill: -app-text;
+}
+
+.column-add-button {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 8 2 8;
+    -fx-min-width: 28px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Board area and columns                                              */
+/* ------------------------------------------------------------------ */
+
+.board-area {
+    -fx-background-color: -app-bg;
+}
+
+.board-column {
+    -fx-background-color: -app-surface;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-spacing: 8;
+    -fx-padding: 10;
+}
+
+.board-column.drop-active {
+    -fx-border-color: -app-accent;
+    -fx-background-color: -app-drop-highlight;
+}
+
+.column-header {
+    -fx-padding: 2 2 3 2;
+}
+
+.column-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -app-text;
+}
+
+.column-count {
+    -fx-background-color: -app-column-header;
+    -fx-background-radius: 9;
+    -fx-padding: 1 8 1 8;
+    -fx-font-size: 11px;
+    -fx-text-fill: -app-text-muted;
+}
+
+.column-scroll {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.column-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.task-list {
+    -fx-background-color: -app-list-bg;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.board-column.drop-active .task-list {
+    -fx-background-color: -app-drop-highlight;
+}
+
+/* ------------------------------------------------------------------ */
+/* Task cards                                                          */
+/* ------------------------------------------------------------------ */
+
+.task-card {
+    -fx-background-color: -app-card;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: -app-border;
+    -fx-padding: 10 12 10 12;
+    -fx-spacing: 6;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 6, 0, 0, 2);
+}
+
+.task-card:hover {
+    -fx-background-color: -app-card-hover;
+    -fx-border-color: -app-accent;
+}
+
+.task-card-dragging {
+    -fx-opacity: 0.45;
+}
+
+.task-card-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -app-text;
+}
+
+.task-card-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: -app-text-muted;
+}
+
+.task-card-footer {
+    -fx-alignment: center-left;
+}
+
+.task-card-created,
+.task-card-due {
+    -fx-font-size: 11px;
+    -fx-text-fill: -app-text-muted;
+}
+
+.task-card-due.overdue {
+    -fx-text-fill: -app-danger;
+    -fx-font-weight: bold;
+}
+
+.chip {
+    -fx-background-radius: 9;
+    -fx-padding: 1 8 1 8;
+    -fx-font-size: 11px;
+    -fx-text-fill: -app-chip-text;
+}
+
+.chip.priority-high {
+    -fx-background-color: -app-priority-high;
+}
+
+.chip.priority-medium {
+    -fx-background-color: -app-priority-medium;
+}
+
+.chip.priority-low {
+    -fx-background-color: -app-priority-low;
+}
+
+/* ------------------------------------------------------------------ */
+/* Status bar                                                          */
+/* ------------------------------------------------------------------ */
+
+.status-bar {
+    -fx-background-color: -app-toolbar;
+    -fx-padding: 6 14 6 14;
+    -fx-spacing: 8;
+    -fx-border-color: -app-border;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -app-text;
+}
+
+.status-text-muted {
+    -fx-font-size: 11px;
+    -fx-text-fill: -app-text-muted;
+}
+
+/* ------------------------------------------------------------------ */
+/* Theme selector dot                                                  */
+/* ------------------------------------------------------------------ */
+
+.theme-dot {
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: -app-border;
+}
+
+/* ------------------------------------------------------------------ */
+/* Common controls (combo box, text fields, scroll bars, menus)        */
+/* ------------------------------------------------------------------ */
+
+.combo-box {
+    -fx-background-color: -app-card;
+    -fx-border-color: -app-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: -app-text;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -app-card;
+    -fx-border-color: -app-border;
+}
+
+.combo-box-popup .list-cell:filled:hover,
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -app-accent;
+    -fx-text-fill: -app-accent-text;
+}
+
+.text-field,
+.text-area,
+.date-picker {
+    -fx-background-color: -app-card;
+    -fx-text-fill: -app-text;
+    -fx-prompt-text-fill: -app-text-muted;
+    -fx-border-color: -app-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.text-area .content {
+    -fx-background-color: -app-card;
+}
+
+.date-picker .text-field {
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -app-border;
+    -fx-background-radius: 6;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -app-text-muted;
+}
+
+.scroll-bar .track,
+.scroll-bar .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -app-text-muted;
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+.separator .line {
+    -fx-border-color: -app-border;
+}
+
+.tooltip {
+    -fx-background-color: -app-text;
+    -fx-text-fill: -app-card;
+    -fx-font-size: 12px;
+}
+
+.context-menu {
+    -fx-background-color: -app-card;
+    -fx-border-color: -app-border;
+}
+
+.menu-item .label {
+    -fx-text-fill: -app-text;
+}
+
+.menu-item:focused {
+    -fx-background-color: -app-accent;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: -app-accent-text;
+}
+
+.check-box {
+    -fx-text-fill: -app-text;
+}
+
+/* ------------------------------------------------------------------ */
+/* Dialogs                                                             */
+/* ------------------------------------------------------------------ */
+
+.app-dialog {
+    -fx-background-color: -app-bg;
+}
+
+.app-dialog .header-panel {
+    -fx-background-color: -app-toolbar;
+}
+
+.app-dialog .header-panel .label {
+    -fx-text-fill: -app-toolbar-text;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.dialog-content {
+    -fx-padding: 4 2 2 2;
+}
+
+.form-grid {
+    -fx-hgap: 10;
+    -fx-vgap: 8;
+}
+
+.form-grid > .label {
+    -fx-text-fill: -app-text-muted;
+}
+
+.error-label {
+    -fx-text-fill: -app-danger;
+    -fx-font-size: 12px;
+}
