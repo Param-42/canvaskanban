@@ -3,7 +3,7 @@
 # On every push and pull request: build, test and create an application image on
 # Windows and on Linux.
 # On a version tag (v1.0.0 and similar): also build the Linux packages and attach
-# everything to a GitHub release.
+# them to a GitHub release.
 #
 # Native installers can only be built on their own operating system, which is why
 # the Windows job builds the Windows package and the Linux job builds the Linux one.
@@ -98,15 +98,20 @@ jobs:
 
     steps:
       - name: Install the build tools
-        run: dnf install -y git findutils tar gzip which java-21-openjdk-devel maven rpm-build
+        run: |
+          dnf install -y git findutils tar gzip which java-21-openjdk-devel maven rpm-build
+          dnf install -y java-21-openjdk-jmods || echo "note: this Fedora has no separate jmods package"
 
       - name: Check out the code
         uses: actions/checkout@v4
 
       - name: Build the RPM
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-21-openjdk
-        run: ./package.sh rpm
+        run: |
+          # Work out JAVA_HOME from the java that the package manager installed.
+          export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")"
+          echo "JAVA_HOME=$JAVA_HOME"
+          java -version
+          ./package.sh rpm
 
       - name: Upload the RPM
         uses: actions/upload-artifact@v4
@@ -127,13 +132,26 @@ jobs:
         with:
           path: dist
 
+      # The application image is a folder with hundreds of files, so it is zipped
+      # before it is attached. The Linux one arrives as a .tar.gz already.
+      - name: Zip the Windows application image
+        run: |
+          mkdir -p release
+          cd dist/CanvasKanban-Windows-app-image
+          zip -qr "$GITHUB_WORKSPACE/release/CanvasKanban-${GITHUB_REF_NAME#v}-windows-x64.zip" CanvasKanban
+
+      - name: Collect the packages
+        run: |
+          cp dist/CanvasKanban-Linux-app-image/*.tar.gz release/ || true
+          cp dist/CanvasKanban-linux-rpm/*.rpm release/ || true
+          cp dist/CanvasKanban-Linux-jar/*.jar release/ || true
+          ls -lh release
+
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          files=$(find dist -type f | tr '\n' ' ')
-          echo "attaching: $files"
           gh release create "${GITHUB_REF_NAME}" \
             --title "CanvasKanban ${GITHUB_REF_NAME}" \
             --generate-notes \
-            $files
+            release/*
