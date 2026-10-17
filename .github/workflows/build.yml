@@ -90,27 +90,40 @@ jobs:
 
   # RPM packages have to be built on a Fedora/RHEL machine. This job runs inside a
   # Fedora container, so it only runs for tags and for manual runs.
+  #
+  # The image is pinned on purpose: Fedora 44 (which "fedora:latest" points at now) has
+  # dropped JDK 21, while Fedora 43 ships exactly the 21.0.12 that the rest of this
+  # project is built with. The second dnf line falls back to a newer JDK if the image is
+  # ever bumped, and JAVA_HOME is worked out from what actually got installed.
   rpm:
     name: Fedora RPM
     runs-on: ubuntu-latest
-    container: fedora:latest
+    container: fedora:43
     if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Install the build tools
         run: |
-          dnf install -y git findutils tar gzip which java-21-openjdk-devel maven rpm-build
-          dnf install -y java-21-openjdk-jmods || echo "note: this Fedora has no separate jmods package"
+          dnf install -y git findutils tar gzip maven rpm-build
+          dnf install -y java-21-openjdk-devel java-21-openjdk-jmods \
+            || dnf install -y java-25-openjdk-devel java-25-openjdk-jmods \
+            || dnf install -y java-latest-openjdk-devel java-latest-openjdk-jmods
 
       - name: Check out the code
         uses: actions/checkout@v4
 
       - name: Build the RPM
         run: |
-          # Work out JAVA_HOME from the java that the package manager installed.
-          export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")"
+          if [ -d /usr/lib/jvm/java-21-openjdk ]; then
+            JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+          else
+            JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")"
+          fi
+          export JAVA_HOME
           echo "JAVA_HOME=$JAVA_HOME"
           java -version
+          echo "jmods that jpackage needs:"
+          ls "$JAVA_HOME/lib/jmods" | head -3
           ./package.sh rpm
 
       - name: Upload the RPM
