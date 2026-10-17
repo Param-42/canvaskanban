@@ -1,5 +1,7 @@
 # CanvasKanban
 
+[![build](https://github.com/Param-42/canvaskanban/actions/workflows/build.yml/badge.svg)](https://github.com/Param-42/canvaskanban/actions/workflows/build.yml)
+
 A small, friendly desktop Kanban board written in JavaFX, with everything stored locally
 in an SQLite file. No account, no server, no internet connection: start it and start
 moving cards.
@@ -430,7 +432,8 @@ work. The window and the themes are unaffected.
 
 ## What was verified, and what was not
 
-Verified on Linux (Fedora, XWayland) with Temurin JDK 21.0.12.1 and Maven 3.9.16:
+Verified on Linux (Fedora, XWayland) with Temurin JDK 21.0.12.1 and Maven 3.9.16, and on
+the continuous integration runners on GitHub (Ubuntu and Windows, see the badge above):
 
 - `mvn clean package` - build success, 67 tests, and the JAR plus `target/libs` are
   produced.
@@ -449,12 +452,16 @@ Verified on Linux (Fedora, XWayland) with Temurin JDK 21.0.12.1 and Maven 3.9.16
   created its database and - after a restart - restored the same board, the same task
   order and the same theme without duplicating the example data.
 
+- The Windows build is verified by continuous integration: on `windows-latest` the
+  workflow runs `mvn clean package`, `mvn test` and `package.bat app-image`, and uploads
+  the resulting application image as a build artifact.
+
 Not verified here:
 
-- The Windows build, `package.bat`, `msi`/`exe` installers and the WiX Toolset: no Windows
-  machine was available. The `.github/workflows/build.yml` matrix job builds and packages
-  on `windows-latest` for this reason.
+- The `msi` and `exe` installers on Windows: they need the WiX Toolset installed, which
+  the build server does not have. `package.bat msi` explains what to install.
 - The `rpm` and `deb` installers (the packaging scripts check for `rpmbuild` / `dpkg` and
-  explain what to install if the tool is missing), and the Fedora container job.
+  explain what to install if the tool is missing), and the Fedora container job - that one
+  only runs for tags and manual runs.
 - macOS: the JavaFX classifier for macOS is configured in `pom.xml`, but it was not built
   here.
