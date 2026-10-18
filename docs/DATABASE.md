@@ -75,8 +75,10 @@ the data folder without any extra permission.
 3. **Test Connection > Finish**. Leave user name and password empty.
 4. Open the connection, then `main > Tables > tasks`, and right click > **View Data**.
 
-DBeaver has a **Read-only** tick in the connection's settings. Turning it on is the safest
-way to browse while the application is running.
+To browse without any risk while the application is running, use the read-only URL from the
+table above (`?mode=ro`). SQLite itself enforces it, so it behaves the same in every client
+and every DBeaver version. Recent DBeaver versions also offer a read-only switch of their own
+in the connection settings, but that one is DBeaver's promise, not the driver's.
 
 If you would rather use the driver from this project than DBeaver's own: create the
 connection with **SQLite (JDBC)**, set the driver class to `org.sqlite.JDBC`, add the JAR
