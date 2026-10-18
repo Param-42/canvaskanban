@@ -88,12 +88,43 @@ The project is an ordinary Maven project, so IntelliJ needs no special setup:
 
 1. **File > Open** and pick the folder that contains `pom.xml` (not a file inside it).
    IntelliJ imports it as a Maven project and downloads JavaFX, SQLite and JUnit.
-2. **File > Project Structure > Project**: set the SDK to **JDK 21** and the language
+2. **File > Project Structure > Project**: set the SDK to **JDK 21** (any JDK 21 or
+   newer also works; the build compiles with `<release>21</release>`) and the language
    level to **21**. (With several JDKs installed, also check
    **Settings > Build Tools > Maven > Runner > JRE**.)
 3. The JavaFX libraries come from Maven with the classifier for your operating system
    (`javafx-controls-21.0.12-linux.jar` and so on, chosen by a profile in `pom.xml`), so
    there is no JavaFX SDK to configure.
+
+### If IntelliJ is installed as a Flatpak on Linux
+
+Two things are different inside the sandbox; both are easy to deal with.
+
+- **The system JDKs are not visible.** The Flatpak only gets access to your home folder,
+  so `/usr/lib/jvm/...` does not exist inside it. Use the JDK that ships with the IDE
+  instead: pick the entry that IntelliJ already calls *JetBrains Runtime* (its home is
+  `/app/jbr`) as the project SDK. It is a full JDK (it has `javac`), so nothing else
+  changes.
+- **JavaFX needs the X11 socket.** The Flatpak grants the `fallback-x11` socket, which
+  means X11 is only provided when Wayland is *not* in use. On a Wayland session the
+  sandbox therefore has no X11 at all, and starting the window fails with
+  `java.lang.UnsupportedOperationException: Unable to open DISPLAY` even though IntelliJ
+  itself runs fine (its own runtime speaks Wayland). Grant the socket once and restart
+  IntelliJ:
+
+  ```bash
+  flatpak override --user --socket=x11 com.jetbrains.IntelliJ-IDEA-Community
+  ```
+
+  JavaFX then connects through XWayland. To undo it later:
+
+  ```bash
+  flatpak override --user --reset com.jetbrains.IntelliJ-IDEA-Community
+  ```
+
+  Running from a normal terminal outside the sandbox (`mvn javafx:run`) is not affected by
+  any of this, and neither is a non-Flatpak IntelliJ (Toolbox, tarball or distribution
+  package).
 
 Then there are two ways to start the window:
 
@@ -117,6 +148,12 @@ Useful VM options for a run configuration:
 
 The second one lets the program use its own database instead of the real one in your data
 folder, which is handy while experimenting.
+
+On a JDK newer than 21 the console also prints *"A restricted method in
+java.lang.System has been called"* and suggests
+`--enable-native-access=javafx.graphics`. It comes from JavaFX loading its native library
+and is harmless; adding `--enable-native-access=ALL-UNNAMED` to the VM options silences
+it.
 
 The tests run the same way: right click `src/test/java` > **Run 'All Tests'**, or run a
 single test class. The eight user interface tests need a display; on a machine without
