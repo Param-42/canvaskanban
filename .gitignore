@@ -26,3 +26,10 @@ Thumbs.db
 # a safety net in case somebody starts the app with a database in the project)
 *.db
 *.db-journal
+
+# The generated project report for the college assignment. It contains the names
+# and enrollment numbers of the team, so it is built locally and not published.
+# build_report.py is the source and is kept in the repository.
+docs/assignment/CanvasKanban-Project-Report.pdf
+docs/assignment/CanvasKanban-Project-Report.docx
+docs/assignment/.venv/
