@@ -106,9 +106,13 @@ build_package() {
   local type="$1"
 
   if [ "$type" = "tar" ]; then
-    local archive="target/${APP_NAME}-${VERSION}-linux-$(uname -m).tar.gz"
+    # The archive is written next to the application image, into the same folder that
+    # gets uploaded and released, so nothing has to be collected from two places.
+    local archive="${DEST_DIR}/${APP_NAME}-${VERSION}-linux-$(uname -m).tar.gz"
     echo "==> creating ${archive}"
-    tar -C "$DEST_DIR" -czf "$archive" "${APP_NAME}"
+    # Built under a temporary name first, so that tar never reads the archive it writes.
+    tar -C "$DEST_DIR" -czf "${archive}.tmp" "${APP_NAME}"
+    mv -f "${archive}.tmp" "$archive"
     echo "    -> ${archive}"
     return
   fi

@@ -450,7 +450,9 @@ the continuous integration runners on GitHub (Ubuntu and Windows, see the badge 
   contains the JavaFX modules plus `java.sql`, `java.logging`, `java.desktop`,
   `java.xml`, `java.naming` and `jdk.unsupported`. The packaged application started,
   created its database and - after a restart - restored the same board, the same task
-  order and the same theme without duplicating the example data.
+  order and the same theme without duplicating the example data. `./package.sh
+  app-image,tar` additionally writes `target/dist/CanvasKanban-1.0.0-linux-x86_64.tar.gz`
+  (146 files), which unpacks to exactly that application image.
 - `./package.sh rpm` produced `canvaskanban-1.0.0-1.x86_64.rpm`: 43 MB, 137 files,
   installed under `/opt/canvaskanban`, with the usual `libX11`, `libXtst` and `alsa-lib`
   requirements of a JavaFX application. It was built inside a `Fedora 43` container,

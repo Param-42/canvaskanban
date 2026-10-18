@@ -181,9 +181,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # --repo is needed because this job does not check the code out, so gh cannot
-          # work the repository out from a git remote.
+          # work the repository out from a git remote. If the release already exists (a
+          # tag that was pushed again, for example), the assets are replaced instead.
           gh release create "${GITHUB_REF_NAME}" \
             --repo "${GITHUB_REPOSITORY}" \
             --title "CanvasKanban ${GITHUB_REF_NAME}" \
             --generate-notes \
-            release/*
+            release/* \
+            || gh release upload "${GITHUB_REF_NAME}" \
+                 --repo "${GITHUB_REPOSITORY}" \
+                 --clobber \
+                 release/*
