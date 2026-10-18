@@ -18,7 +18,7 @@ SQLite file.
 
 ## Download
 
-No Java is needed: every package carries its own runtime, and neither the install
+No Java is needed, every package carries its own runtime, and neither the install
 nor the uninstall ever touches your tasks.
 
 ### One command
