@@ -387,24 +387,65 @@ def _pdf_markup(text):
     return PLACEHOLDER.sub(r'<font color="#B00020"><b>\1</b></font>', text)
 
 
+# ---------------------------------------------------------------------------
+# The PDF carries its own font. The built-in PDF fonts (Helvetica and friends)
+# are only referenced by name and are not embedded, so a viewer that does not
+# have them shows boxes instead of letters. A TrueType font is embedded here,
+# which means the file looks the same everywhere.
+# ---------------------------------------------------------------------------
+FONT = "Helvetica"
+FONT_BOLD = "Helvetica-Bold"
+
+
+def _register_font():
+    """Embeds Noto Sans if it is installed, otherwise keeps the built-in font."""
+    global FONT, FONT_BOLD
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+
+    for directory in ("/usr/share/fonts/google-noto",
+                      "/usr/share/fonts/truetype/noto",
+                      os.path.expanduser("~/.fonts")):
+        files = {n: os.path.join(directory, "NotoSans-%s.ttf" % n)
+                 for n in ("Regular", "Bold", "Italic", "BoldItalic")}
+        if not all(os.path.exists(p) for p in files.values()):
+            continue
+        pdfmetrics.registerFont(TTFont("NotoSans", files["Regular"]))
+        pdfmetrics.registerFont(TTFont("NotoSans-Bold", files["Bold"]))
+        pdfmetrics.registerFont(TTFont("NotoSans-Italic", files["Italic"]))
+        pdfmetrics.registerFont(TTFont("NotoSans-BoldItalic", files["BoldItalic"]))
+        pdfmetrics.registerFontFamily("NotoSans", normal="NotoSans", bold="NotoSans-Bold",
+                                      italic="NotoSans-Italic",
+                                      boldItalic="NotoSans-BoldItalic")
+        FONT, FONT_BOLD = "NotoSans", "NotoSans-Bold"
+        return True
+    return False
+
+
 def build_pdf(path):
+    embedded = _register_font()
     styles = getSampleStyleSheet()
-    title = ParagraphStyle("t", parent=styles["Title"], fontSize=24, leading=29,
+    title = ParagraphStyle("t", parent=styles["Title"], fontName=FONT, fontSize=24, leading=29,
                            spaceAfter=6, alignment=TA_CENTER)
-    subtitle = ParagraphStyle("st", parent=styles["Normal"], fontSize=14, leading=18,
-                              alignment=TA_CENTER, textColor=colors.HexColor("#444444"))
-    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontSize=16, leading=20,
-                        spaceBefore=14, spaceAfter=8, textColor=colors.HexColor("#12324f"))
-    h2 = ParagraphStyle("h2", parent=styles["Heading2"], fontSize=13, leading=17,
-                        spaceBefore=10, spaceAfter=6, textColor=colors.HexColor("#1d4e74"))
-    h3 = ParagraphStyle("h3", parent=styles["Heading3"], fontSize=11.5, leading=15,
-                        spaceBefore=9, spaceAfter=4, textColor=colors.HexColor("#2d6f9f"))
-    body = ParagraphStyle("b", parent=styles["BodyText"], fontSize=10.5, leading=15,
-                          alignment=TA_LEFT, spaceAfter=5)
-    small = ParagraphStyle("s", parent=body, fontSize=9, leading=12.5,
+    subtitle = ParagraphStyle("st", parent=styles["Normal"], fontName=FONT, fontSize=14,
+                              leading=18, alignment=TA_CENTER,
+                              textColor=colors.HexColor("#444444"))
+    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontName=FONT_BOLD, fontSize=16,
+                        leading=20, spaceBefore=14, spaceAfter=8,
+                        textColor=colors.HexColor("#12324f"))
+    h2 = ParagraphStyle("h2", parent=styles["Heading2"], fontName=FONT_BOLD, fontSize=13,
+                        leading=17, spaceBefore=10, spaceAfter=6,
+                        textColor=colors.HexColor("#1d4e74"))
+    h3 = ParagraphStyle("h3", parent=styles["Heading3"], fontName=FONT_BOLD, fontSize=11.5,
+                        leading=15, spaceBefore=9, spaceAfter=4,
+                        textColor=colors.HexColor("#2d6f9f"))
+    body = ParagraphStyle("b", parent=styles["BodyText"], fontName=FONT, fontSize=10.5,
+                          leading=15, alignment=TA_LEFT, spaceAfter=5)
+    small = ParagraphStyle("s", parent=body, fontName=FONT, fontSize=9, leading=12.5,
                            textColor=colors.HexColor("#555555"))
-    cell = ParagraphStyle("c", parent=body, fontSize=9.5, leading=13, spaceAfter=0)
-    cellb = ParagraphStyle("cb", parent=cell, fontName="Helvetica-Bold")
+    cell = ParagraphStyle("c", parent=body, fontName=FONT, fontSize=9.5, leading=13,
+                          spaceAfter=0)
+    cellb = ParagraphStyle("cb", parent=cell, fontName=FONT_BOLD)
 
     def P(text, style=body):
         return Paragraph(_pdf_markup(text), style)
@@ -412,7 +453,7 @@ def build_pdf(path):
     def bullet_list(items, style=body):
         return ListFlowable(
             [ListItem(P(i, style)) for i in items],
-            bulletType="bullet", bulletFontName="Helvetica", bulletFontSize=7,
+            bulletType="bullet", bulletFontName=FONT, bulletFontSize=7,
             bulletOffsetY=-1, leftIndent=14, spaceAfter=6)
 
     def table(rows, widths, bold_first_col=False, bold_header=True):
@@ -434,7 +475,7 @@ def build_pdf(path):
             ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
         ]))
         if bold_first_col:
-            t.setStyle(TableStyle([("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold")]))
+            t.setStyle(TableStyle([("FONTNAME", (0, 1), (0, -1), FONT_BOLD)]))
         return t
 
     story = []
@@ -542,7 +583,7 @@ def build_pdf(path):
 
     def footer(canvas, _doc):
         canvas.saveState()
-        canvas.setFont("Helvetica", 8)
+        canvas.setFont(FONT, 8)
         canvas.setFillColor(colors.HexColor("#777777"))
         canvas.drawString(2 * cm, 1.1 * cm, "CanvasKanban - Software Project Report")
         canvas.drawRightString(A4[0] - 2 * cm, 1.1 * cm, "Page %d" % canvas.getPageNumber())
