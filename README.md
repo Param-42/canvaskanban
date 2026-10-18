@@ -451,6 +451,11 @@ the continuous integration runners on GitHub (Ubuntu and Windows, see the badge 
   `java.xml`, `java.naming` and `jdk.unsupported`. The packaged application started,
   created its database and - after a restart - restored the same board, the same task
   order and the same theme without duplicating the example data.
+- `./package.sh rpm` produced `canvaskanban-1.0.0-1.x86_64.rpm`: 43 MB, 137 files,
+  installed under `/opt/canvaskanban`, with the usual `libX11`, `libXtst` and `alsa-lib`
+  requirements of a JavaFX application. It was built inside a `Fedora 43` container,
+  because this machine has no `rpmbuild` - which is also why the workflow has a Fedora
+  job of its own.
 
 - The Windows build is verified by continuous integration: on `windows-latest` the
   workflow runs `mvn clean package`, `mvn test` and `package.bat app-image`, and uploads
@@ -460,8 +465,7 @@ Not verified here:
 
 - The `msi` and `exe` installers on Windows: they need the WiX Toolset installed, which
   the build server does not have. `package.bat msi` explains what to install.
-- The `rpm` and `deb` installers (the packaging scripts check for `rpmbuild` / `dpkg` and
-  explain what to install if the tool is missing), and the Fedora container job - that one
-  only runs for tags and manual runs.
+- The `deb` installer: it needs `dpkg` and `fakeroot`, and `fakeroot` is not installed on
+  this machine. The packaging script says so and explains what to install.
 - macOS: the JavaFX classifier for macOS is configured in `pom.xml`, but it was not built
   here.

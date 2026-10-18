@@ -94,7 +94,13 @@ jobs:
   # The image is pinned on purpose: Fedora 44 (which "fedora:latest" points at now) has
   # dropped JDK 21, while Fedora 43 ships exactly the 21.0.12 that the rest of this
   # project is built with. The second dnf line falls back to a newer JDK if the image is
-  # ever bumped, and JAVA_HOME is worked out from what actually got installed.
+  # ever bumped.
+  #
+  # Careful with the JDK: Fedora's "maven" package pulls in the newest JDK (25 at the
+  # moment) and points /usr/bin/java and /usr/bin/jpackage at it. That JDK is installed
+  # without jmods, so jlink cannot build a runtime image with it ("No JDK Modules found").
+  # The step below therefore picks the JDK 21 that this job installed and puts its bin
+  # directory first on the PATH, so java, javac and jpackage all come from it.
   rpm:
     name: Fedora RPM
     runs-on: ubuntu-latest
@@ -114,16 +120,26 @@ jobs:
 
       - name: Build the RPM
         run: |
-          if [ -d /usr/lib/jvm/java-21-openjdk ]; then
-            JAVA_HOME=/usr/lib/jvm/java-21-openjdk
-          else
-            JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")"
+          for candidate in /usr/lib/jvm/java-21-openjdk /usr/lib/jvm/java-21-openjdk-* \
+                           /usr/lib/jvm/jre-21-openjdk; do
+            if [ -x "$candidate/bin/jpackage" ] && [ -d "$candidate/jmods" ]; then
+              export JAVA_HOME="$candidate"
+              break
+            fi
+          done
+
+          if [ -z "${JAVA_HOME:-}" ]; then
+            echo "No JDK with jmods was found; jpackage needs them to build a runtime image."
+            ls -d /usr/lib/jvm/*/ || true
+            exit 1
           fi
-          export JAVA_HOME
+
+          export PATH="$JAVA_HOME/bin:$PATH"
           echo "JAVA_HOME=$JAVA_HOME"
+          command -v java
+          command -v jpackage
           java -version
-          echo "jmods that jpackage needs:"
-          ls "$JAVA_HOME/lib/jmods" | head -3
+          echo "jmods that jpackage needs: $(ls "$JAVA_HOME/jmods" | wc -l) files"
           ./package.sh rpm
 
       - name: Upload the RPM
@@ -164,7 +180,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # --repo is needed because this job does not check the code out, so gh cannot
+          # work the repository out from a git remote.
           gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
             --title "CanvasKanban ${GITHUB_REF_NAME}" \
             --generate-notes \
             release/*

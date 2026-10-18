@@ -19,6 +19,11 @@ rem ===========================================================================
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
+rem java, javac and jpackage all live in JAVA_HOME\bin, which is not always on the
+rem PATH. Adding it here means the checks below and jpackage itself always find the
+rem same JDK.
+if defined JAVA_HOME set "PATH=%JAVA_HOME%\bin;%PATH%"
+
 set APP_NAME=CanvasKanban
 set MAIN_CLASS=com.canvaskanban.Launcher
 set VENDOR=CanvasKanban

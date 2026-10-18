@@ -19,6 +19,14 @@ set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR"
 
+# java, javac and jpackage all live in JAVA_HOME/bin, which is not always on the PATH
+# (inside a container, for example). Adding it here means the checks below and jpackage
+# itself always find the same JDK.
+if [ -n "${JAVA_HOME:-}" ] && [ -d "$JAVA_HOME/bin" ]; then
+  PATH="$JAVA_HOME/bin:$PATH"
+  export PATH
+fi
+
 APP_NAME="CanvasKanban"
 MAIN_CLASS="com.canvaskanban.Launcher"     # a plain class, never MainApp (see Launcher.java)
 VENDOR="CanvasKanban"
@@ -45,6 +53,17 @@ echo "==> main class : ${MAIN_CLASS}"
 # ---------------------------------------------------------------------------
 command -v mvn >/dev/null 2>&1 || { echo "ERROR: Maven (mvn) was not found. Install Maven first."; exit 1; }
 command -v jpackage >/dev/null 2>&1 || { echo "ERROR: jpackage was not found. It is part of JDK 21 (or newer)."; exit 1; }
+
+# jpackage builds the private runtime with jlink, which needs the jmod files of the JDK
+# that jpackage belongs to. Some distributions ship the JDK without them (on Fedora they
+# are in java-21-openjdk-jmods), and jlink then falls back to the JDK image itself, which
+# only works if that image was not modified by the distribution.
+JPACKAGE_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v jpackage)")")")"
+if [ ! -d "${JPACKAGE_HOME}/jmods" ]; then
+  echo "WARNING: ${JPACKAGE_HOME} has no jmods directory."
+  echo "         jlink falls back to the JDK image and may refuse to run on it."
+  echo "         Install the jmods of that JDK (for example: dnf install java-21-openjdk-jmods)."
+fi
 
 # ---------------------------------------------------------------------------
 # 3. Build the application (this also copies the runtime dependencies to target/libs)
