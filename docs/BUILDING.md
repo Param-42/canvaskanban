@@ -82,6 +82,49 @@ On Windows, use `;` instead of `:` in the classpath:
 java -cp "target\libs\*" com.canvaskanban.Launcher
 ```
 
+## Running it from IntelliJ IDEA
+
+The project is an ordinary Maven project, so IntelliJ needs no special setup:
+
+1. **File > Open** and pick the folder that contains `pom.xml` (not a file inside it).
+   IntelliJ imports it as a Maven project and downloads JavaFX, SQLite and JUnit.
+2. **File > Project Structure > Project**: set the SDK to **JDK 21** and the language
+   level to **21**. (With several JDKs installed, also check
+   **Settings > Build Tools > Maven > Runner > JRE**.)
+3. The JavaFX libraries come from Maven with the classifier for your operating system
+   (`javafx-controls-21.0.12-linux.jar` and so on, chosen by a profile in `pom.xml`), so
+   there is no JavaFX SDK to configure.
+
+Then there are two ways to start the window:
+
+| Way | How | Notes |
+| --- | --- | --- |
+| Maven goal | Maven tool window > **Plugins > javafx > javafx:run**, or a Maven run configuration with the command line `javafx:run` | This is exactly what `mvn javafx:run` does, and it puts JavaFX on the module path |
+| Plain Java run configuration | **Run > Edit Configurations > + > Application**, main class `com.canvaskanban.Launcher` | JavaFX is loaded from the class path here; the warning *"Unsupported JavaFX configuration: classes were loaded from 'unnamed module'"* is expected and harmless |
+
+Do **not** use `com.canvaskanban.MainApp` as the main class of a plain Application run
+configuration: because `MainApp` extends `javafx.application.Application`, the Java
+launcher refuses to start it from the class path with *"JavaFX runtime components are
+missing"*. `Launcher` is a plain class that calls `MainApp.main`, which is why the
+packaged application, the JAR and the tests all go through it as well.
+
+Useful VM options for a run configuration:
+
+```
+-Dfile.encoding=UTF-8
+-Dcanvaskanban.data.dir=/tmp/idea-board
+```
+
+The second one lets the program use its own database instead of the real one in your data
+folder, which is handy while experimenting.
+
+The tests run the same way: right click `src/test/java` > **Run 'All Tests'**, or run a
+single test class. The eight user interface tests need a display; on a machine without
+one they skip themselves and the other 59 still run.
+
+The `.idea` folder that IntelliJ creates is already listed in `.gitignore`, so the
+project files of one person's IDE never end up in the repository.
+
 ## Run the tests
 
 ```bash
