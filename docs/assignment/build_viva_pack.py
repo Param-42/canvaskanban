@@ -433,7 +433,7 @@ NOTES = [
     ("p", "These four things turn a claim into evidence. Have them ready:"),
     ("bullets", [
         "The test run: \"mvn test\" finishes with 67 tests and a green result.",
-        "The database: run the sqlite3 command below and show the rows that the board created.",
+        "The database: show the row behind a task you just created, either with the sqlite3 command below or in a SQL client - DBeaver, SQL Workbench/J or any JDBC client, the settings are in docs/DATABASE.md.",
         "The release page: six downloadable files for Windows and Linux.",
         "The runs page: the same build and the same tests run automatically on Ubuntu and Windows.",
     ]),
@@ -441,7 +441,12 @@ NOTES = [
              "mvn javafx:run                             # start the application\n"
              "sqlite3 ~/.local/share/canvaskanban/canvaskanban.db \\\n"
              "  \"SELECT b.name, t.status, t.title FROM boards b \" \\\n"
-             "  \"JOIN tasks t ON t.board_id = b.id ORDER BY t.id;\""),
+             "  \"JOIN tasks t ON t.board_id = b.id ORDER BY t.id;\"\n"
+             "\n"
+             "# the same database in any SQL client, over JDBC:\n"
+             "#   driver  org.sqlite.JDBC\n"
+             "#   url     jdbc:sqlite:/home/you/.local/share/canvaskanban/canvaskanban.db\n"
+             "#   read only: add ?mode=ro, or close the application before writing"),
 
     ("h1", "Part 2 - Member by member"),
 
@@ -619,6 +624,10 @@ NOTES = [
          "The data folder is chosen by the operating system, so the program behaves the same on Windows, Linux and macOS without any configuration."),
         ("How is a date stored in a text column?",
          "The due date is stored as text in the ISO form yyyy-MM-dd, which sorts and compares correctly and is easy to read in a database browser."),
+        ("Can I open the database with a normal SQL client?",
+         "Yes. It is a plain SQLite file, so DBeaver, SQL Workbench/J or any JDBC client can open it with the driver org.sqlite.JDBC and the URL jdbc:sqlite:<path to the file> - the same driver the application uses."),
+        ("What if the client and the application both write?",
+         "Only one writer is allowed at a time, so the second one waits and then fails with \"database is locked\". Reading is always safe; for writing we close the application first, or work on a copy made with VACUUM INTO."),
     ], [3.4, 6.2]),
     ("h3", "Terms to know"),
     ("bullets", [

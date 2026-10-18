@@ -100,3 +100,5 @@ is in [docs/USING.md](docs/USING.md).
   installers, how continuous integration works
 - [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) - the project structure and how the
   code fits together
+- [**docs/DATABASE.md**](docs/DATABASE.md) - the tables, and how to open the database in
+  DBeaver, SQL Workbench/J or any other JDBC client

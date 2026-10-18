@@ -70,6 +70,9 @@ MainApp  ->  MainView  ->  BoardService  ->  BoardDao / TaskDao / SettingDao  ->
   is happy with that, it keeps the code simple, and it means no connection is ever left
   open behind a dialog.
 - **The DAOs** contain plain SQL. Nothing is hidden behind an ORM.
+- **The file they write to** is an ordinary SQLite database, so it can also be opened from
+  outside the application - with the `sqlite3` command line or any JDBC client. The tables
+  and the connection settings are in [DATABASE.md](DATABASE.md).
 - **`BoardService`** is the only thing the user interface talks to. It knows the rules:
   a board always gets the three columns, deleting a board deletes its tasks, moving a
   task rewrites the positions of both columns in one transaction.

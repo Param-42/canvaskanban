@@ -33,6 +33,11 @@ may be read-only and an update must never overwrite your tasks.
 The application shows the exact path in the bottom right corner, so you never have to
 guess.
 
+**Look inside it** - `canvaskanban.db` is a normal SQLite file, so the `sqlite3` command
+line or any database client can open it, including over JDBC. The connection settings, the
+queries worth running and the one rule about writing while the app is running are in
+[docs/DATABASE.md](DATABASE.md).
+
 **Backup** - close the app and copy that folder somewhere safe. That is the whole
 database.
 
@@ -55,8 +60,10 @@ missing, the app creates a new one - the example board is back, which is a good 
 a fresh database was created.
 
 **A "database is locked" error**
-Two copies of the application cannot write at the same time. Close the other one and try
-again; reads are always safe.
+Two programs cannot write at the same time - that is true for two copies of the application
+and also for a database client you have opened on the file. Close the other one and try
+again; reads are always safe, and
+[docs/DATABASE.md](DATABASE.md) shows how to work on a copy instead.
 
 ## Known limitations
 
