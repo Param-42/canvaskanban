@@ -2,8 +2,10 @@
 #
 # On every push and pull request: build, test and create an application image on
 # Windows and on Linux.
-# On a version tag (v1.0.0 and similar): also build the Linux packages and attach
-# them to a GitHub release.
+# On a version tag (v1.0.0 and similar): additionally build the installers - a
+# .deb and .rpm for Ubuntu/Debian and Fedora/RHEL and a .msi for Windows - and
+# attach everything to a GitHub release. That way a new user only needs one
+# click: the install button, or a double click on the downloaded installer.
 #
 # Native installers can only be built on their own operating system, which is why
 # the Windows job builds the Windows package and the Linux job builds the Linux one.
@@ -43,9 +45,9 @@ jobs:
       # Xvfb gives the build server a virtual screen, so the JavaFX user interface
       # tests really run instead of skipping themselves. If Xvfb is not available the
       # tests still pass, they just skip the 8 user interface tests.
-      - name: Install a virtual screen (Linux only)
+      - name: Install a virtual screen and the Debian tools (Linux only)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y xvfb || true
+        run: sudo apt-get update && sudo apt-get install -y xvfb fakeroot || true
 
       - name: Build with Maven (mvn clean package)
         shell: bash
@@ -65,9 +67,13 @@ jobs:
             mvn -B --no-transfer-progress test
           fi
 
-      - name: Build the application image (Linux)
+      # The deb is built here and not in the rpm job, because a Debian package
+      # must be built on a Debian system (the Ubuntu runner is one). With the
+      # .deb attached to the release, Ubuntu/Debian users can just double
+      # click it to install.
+      - name: Build the application image and the deb (Linux)
         if: runner.os == 'Linux'
-        run: ./package.sh app-image,tar
+        run: ./package.sh app-image,tar,deb
 
       - name: Build the application image (Windows)
         if: runner.os == 'Windows'
@@ -149,10 +155,51 @@ jobs:
           path: target/dist/*.rpm
           if-no-files-found: error
 
+  # Windows installers (.msi) have to be built on Windows and need the WiX
+  # Toolset v3, which jpackage calls to produce them. This is a separate job,
+  # and only for tags and manual runs, so that a WiX problem can never take
+  # the ordinary Windows build (tests + application image) down.
+  msi:
+    name: Windows MSI
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # jpackage does not come with WiX; the candle and light tools it calls
+      # have to be on the PATH.
+      - name: Install the WiX Toolset v3
+        shell: powershell
+        run: |
+          choco install wixtoolset -y --no-progress
+          $wix = (Get-ChildItem 'C:\Program Files (x86)\WiX Toolset v*' -Directory |
+                  Select-Object -Last 1).FullName
+          Add-Content $env:GITHUB_ENV "PATH=$wix\bin;$env:PATH"
+
+      - name: Build the MSI
+        shell: cmd
+        run: package.bat msi
+
+      - name: Upload the MSI
+        uses: actions/upload-artifact@v4
+        with:
+          name: CanvasKanban-windows-msi
+          path: target/dist/*.msi
+          if-no-files-found: error
+
   release:
     name: Attach the packages to the release
     runs-on: ubuntu-latest
-    needs: [ test-and-package, rpm ]
+    needs: [ test-and-package, rpm, msi ]
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -172,7 +219,9 @@ jobs:
       - name: Collect the packages
         run: |
           cp dist/CanvasKanban-Linux-app-image/*.tar.gz release/ || true
+          cp dist/CanvasKanban-Linux-app-image/*.deb release/ || true
           cp dist/CanvasKanban-linux-rpm/*.rpm release/ || true
+          cp dist/CanvasKanban-windows-msi/*.msi release/ || true
           cp dist/CanvasKanban-Linux-jar/*.jar release/ || true
           ls -lh release
 

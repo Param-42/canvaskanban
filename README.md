@@ -10,6 +10,7 @@ moving cards.
 
 ## Table of contents
 
+- [Download and run (one command)](#download-and-run-one-command)
 - [What it does](#what-it-does)
 - [Themes](#themes)
 - [Requirements](#requirements)
@@ -26,6 +27,61 @@ moving cards.
 - [Troubleshooting](#troubleshooting)
 - [Known limitations](#known-limitations)
 - [What was verified, and what was not](#what-was-verified-and-what-was-not)
+
+![A board after some drag and drop](docs/screenshots/drag-and-drop-result.png)
+
+## Download and run (one command)
+
+You do **not** need Java for this: every package carries its own runtime. Pick your
+operating system:
+
+### Linux
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Param-42/canvaskanban/main/install.sh)"
+```
+
+That downloads the newest release, installs it into `~/.local`, and registers the
+application in your desktop menu (GNOME, KDE, Xfce, ...), so afterwards it starts like
+any other program - from the menu, or with `canvaskanban` in a terminal. Run it again
+to update; your tasks stay as they are.
+
+```bash
+./install.sh v1.0.0       # a specific release instead of the newest
+./install.sh --uninstall  # remove it again (your board data is kept)
+```
+
+Or, if you prefer a classic installer:
+
+| You are on | From the [latest release](https://github.com/Param-42/canvaskanban/releases/latest) download | Install |
+| --- | --- | --- |
+| Fedora / RHEL | `canvaskanban-*.rpm` | `sudo dnf install ./canvaskanban-*.rpm` |
+| Ubuntu / Debian | `canvaskanban_*.deb` | double click it, or `sudo apt install ./canvaskanban_*.deb` |
+| anything else | `CanvasKanban-*-linux-*.tar.gz` | unpack it and run `CanvasKanban/bin/CanvasKanban` |
+
+### Windows
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Param-42/canvaskanban/main/install.ps1 | iex"
+```
+
+That downloads the newest release, installs it into `%LOCALAPPDATA%\Programs`, and
+creates shortcuts in the Start Menu and on the Desktop, so afterwards you find it as
+**CanvasKanban** in the Start Menu. Run it again to update, and
+`./install.ps1 -Uninstall` to remove it (your board data is kept).
+
+Or download from the [latest release](https://github.com/Param-42/canvaskanban/releases/latest)
+directly: the `CanvasKanban-*.msi` is a normal installer - double click it in the
+Explorer and follow the steps. The `.zip` is the portable variant - unpack it and
+double click `CanvasKanban.exe`.
+
+### What the one-command installers do, in short
+
+* download the correct package for your operating system from the newest release
+* into your home directory, so no administrator rights are needed
+* create the menu entry (the Start Menu and Desktop shortcut on Windows)
+* never touch your tasks: the SQLite database in your data folder survives
+  installs, updates and uninstalls
 
 ## What it does
 
