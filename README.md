@@ -21,6 +21,8 @@ SQLite file.
 No Java is needed: every package carries its own runtime, and neither the install
 nor the uninstall ever touches your tasks.
 
+### One command
+
 <div align="center">
 
 | Platform | One command |
@@ -30,19 +32,34 @@ nor the uninstall ever touches your tasks.
 
 </div>
 
-That is all: the app is installed into your home directory, shows up in the menu
-(Start Menu and Desktop on Windows), and runs it again any time to update. Remove
-it again with `--uninstall` (`-Uninstall` on Windows).
+That is all: the app is installed into your home directory and appears in your menu
+(plus a Desktop shortcut on Windows). Run the same command again later to update, or
+`--uninstall` (`-Uninstall`) to remove it - your tasks are kept either way.
 
-Prefer a classic installer? Take one from the
-[latest release](https://github.com/Param-42/canvaskanban/releases/latest):
+### Installers
 
-| You are on | Download | Install |
+Prefer a classic installer? These download the newest version directly:
+
+<div align="center">
+
+[![Windows installer](https://img.shields.io/badge/Windows-.msi-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Param-42/canvaskanban/releases/latest/download/CanvasKanban-windows-x64.msi)
+[![Ubuntu / Debian installer](https://img.shields.io/badge/Ubuntu%20%2F%20Debian-.deb-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.deb)
+[![Fedora / RHEL installer](https://img.shields.io/badge/Fedora%20%2F%20RHEL-.rpm-51A2DA?style=for-the-badge&logo=fedora&logoColor=white)](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.rpm)
+[![Portable Linux archive](https://img.shields.io/badge/Linux-.tar.gz-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.tar.gz)
+
+</div>
+
+| You are on | Download | Then |
 | --- | --- | --- |
-| Fedora / RHEL | `canvaskanban-*.rpm` | `sudo dnf install ./canvaskanban-*.rpm` |
-| Ubuntu / Debian | `canvaskanban_*.deb` | double click it |
-| Windows | `CanvasKanban-*.msi` | double click it |
-| anything Linux | `CanvasKanban-*-linux-*.tar.gz` | unpack and run `CanvasKanban/bin/CanvasKanban` |
+| Windows | [CanvasKanban-windows-x64.msi](https://github.com/Param-42/canvaskanban/releases/latest/download/CanvasKanban-windows-x64.msi) | double click it and follow the steps |
+| Ubuntu / Debian | [canvaskanban-linux-x86_64.deb](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.deb) | double click it, or `sudo apt install ./canvaskanban-linux-x86_64.deb` |
+| Fedora / RHEL | [canvaskanban-linux-x86_64.rpm](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.rpm) | `sudo dnf install ./canvaskanban-linux-x86_64.rpm` |
+| any Linux, portable | [canvaskanban-linux-x86_64.tar.gz](https://github.com/Param-42/canvaskanban/releases/latest/download/canvaskanban-linux-x86_64.tar.gz) | unpack and run `CanvasKanban/bin/CanvasKanban` |
+| Windows, portable | [CanvasKanban-windows-x64.zip](https://github.com/Param-42/canvaskanban/releases/latest/download/CanvasKanban-windows-x64.zip) | unpack and run `CanvasKanban.exe` |
+
+Every link above points at `releases/latest`, so they keep working for future
+versions. macOS is not packaged yet - build it from source, see
+[docs/BUILDING.md](docs/BUILDING.md).
 
 ## Features
 

@@ -210,11 +210,14 @@ jobs:
 
       # The application image is a folder with hundreds of files, so it is zipped
       # before it is attached. The Linux one arrives as a .tar.gz already.
+      # The file name deliberately has no version in it, so that the direct link
+      # .../releases/latest/download/CanvasKanban-windows-x64.zip always points at
+      # the newest build (see the "stable names" step below).
       - name: Zip the Windows application image
         run: |
           mkdir -p release
           cd dist/CanvasKanban-Windows-app-image
-          zip -qr "$GITHUB_WORKSPACE/release/CanvasKanban-${GITHUB_REF_NAME#v}-windows-x64.zip" CanvasKanban
+          zip -qr "$GITHUB_WORKSPACE/release/CanvasKanban-windows-x64.zip" CanvasKanban
 
       - name: Collect the packages
         run: |
@@ -224,6 +227,51 @@ jobs:
           cp dist/CanvasKanban-windows-msi/*.msi release/ || true
           cp dist/CanvasKanban-Linux-jar/*.jar release/ || true
           ls -lh release
+
+      # jpackage puts the version into every file name (Canvaskanban-1.0.0.msi,
+      # canvaskanban_1.0.0_amd64.deb, ...). That is fine on the release page, but
+      # it makes direct download links impossible to keep working, because the
+      # next release would change every name. So the version is stripped here and
+      # the links in the README and on the web page point at
+      #     .../releases/latest/download/<name>
+      # which therefore never goes stale. The version is still in the release
+      # title, in the release notes and inside the packages themselves.
+      - name: Give the packages stable names
+        run: |
+          cd release
+          for f in *; do
+            case "$f" in
+              *-linux-*.tar.gz) mv "$f" canvaskanban-linux-x86_64.tar.gz ;;
+              *.deb)            mv "$f" canvaskanban-linux-x86_64.deb ;;
+              *.rpm)            mv "$f" canvaskanban-linux-x86_64.rpm ;;
+              *.msi)            mv "$f" CanvasKanban-windows-x64.msi ;;
+              *.jar)            mv "$f" canvaskanban.jar ;;
+            esac
+          done
+          ls -lh
+
+      # Assets of earlier runs that do not use the stable names (the old
+      # CanvasKanban-1.0.0.msi and friends) are removed, so the release always
+      # contains exactly the same six files and nothing is left behind.
+      - name: Remove outdated assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing="$(gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+            --json assets -q '.assets[].name' 2>/dev/null || true)"
+          for name in $existing; do
+            case "$name" in
+              canvaskanban-linux-x86_64.tar.gz|canvaskanban-linux-x86_64.deb|\
+              canvaskanban-linux-x86_64.rpm|CanvasKanban-windows-x64.msi|\
+              CanvasKanban-windows-x64.zip|canvaskanban.jar)
+                ;;
+              *)
+                echo "removing outdated asset: $name"
+                gh release delete-asset "$GITHUB_REF_NAME" "$name" \
+                  --repo "$GITHUB_REPOSITORY" --yes
+                ;;
+            esac
+          done
 
       - name: Create the release
         env:
