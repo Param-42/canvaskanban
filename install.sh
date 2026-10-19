@@ -83,6 +83,31 @@ else
   URL="$(xargs < "${TMP}/url")"
   echo "==> Downloading ${URL}"
   FETCH "$URL" "${TMP}/${APP_NAME}.tar.gz"
+
+  # GitHub stores a SHA-256 for every asset it keeps and reports it in the same
+  # JSON. Comparing the downloaded file with that value proves it arrived
+  # complete and is exactly the file the release published, which is the one
+  # thing a user can check about an unsigned download. (Releases made before
+  # this check existed simply carry no digest, and are installed unchecked.)
+  if command -v sha256sum >/dev/null 2>&1; then
+    url_line="$(grep -n -m1 -E '"browser_download_url": *"[^"]*linux-'"${ARCH}"'\.tar\.gz"' \
+                  "$JSON" | cut -d: -f1 || true)"
+    expected="$(head -n "${url_line:-0}" "$JSON" \
+                  | grep -o '"sha256:[0-9a-f]\{64\}"' | tail -1 | tr -d '"' | cut -d: -f2 || true)"
+    if [ -n "$expected" ]; then
+      actual="$(sha256sum "${TMP}/${APP_NAME}.tar.gz" | cut -d' ' -f1)"
+      if [ "$actual" != "$expected" ]; then
+        echo "ERROR: the downloaded archive is not the file that release published." >&2
+        echo "       expected SHA-256 ${expected}" >&2
+        echo "       got      SHA-256 ${actual}" >&2
+        echo "       Nothing was installed." >&2
+        exit 1
+      fi
+      echo "==> Checksum verified (SHA-256 ${actual})"
+    else
+      echo "==> This release publishes no checksum; skipping the check."
+    fi
+  fi
 fi
 
 # ---------------------------------------------------------------------------

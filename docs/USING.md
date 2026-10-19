@@ -65,6 +65,14 @@ and also for a database client you have opened on the file. Close the other one 
 again; reads are always safe, and
 [docs/DATABASE.md](DATABASE.md) shows how to work on a copy instead.
 
+**Windows says the app is unsafe, or the browser blocked the download**
+The packages are not code signed, so Windows (SmartScreen) and the browser warn about a
+program whose publisher they cannot identify. Choose **Keep** in the browser, then
+**More info > Run anyway** in the SmartScreen dialog; if the `.exe` stays blocked after
+unpacking the `.zip`, right click it, open **Properties** and tick **Unblock**. If you would
+rather not click through that, the one-command installer downloads without a browser and
+checks the file against the SHA-256 GitHub publishes before installing it.
+
 ## Known limitations
 
 - Boards, tasks and settings are local to your machine. There is no sharing, no sync and

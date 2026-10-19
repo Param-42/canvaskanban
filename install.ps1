@@ -84,6 +84,24 @@ $Zip = if ($Archive) {
   $dir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP $AppName) -Force
   $Zip = Join-Path $dir $asset.name
   Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $Zip
+
+  # GitHub stores a SHA-256 for every asset it keeps and reports it in the same
+  # response, so the file can be checked before anything is unpacked. That is
+  # also the check an unsigned download leaves to the user: a browser may warn
+  # about a package it cannot identify, but a wrong checksum always stops.
+  # (Releases made before this check existed carry no digest and are installed
+  # unchecked.)
+  if ($asset.digest -and $asset.digest.StartsWith('sha256:')) {
+    $expected = $asset.digest.Substring(7).ToLower()
+    $actual   = (Get-FileHash -Path $Zip -Algorithm SHA256).Hash.ToLower()
+    if ($actual -ne $expected) {
+      throw "The downloaded file is not the one that release published - nothing was installed.`n           expected SHA-256 $expected`n           got      SHA-256 $actual"
+    }
+    Write-Host "==> Checksum verified (SHA-256 $actual)"
+  } else {
+    Write-Host "==> This release publishes no checksum; skipping the check."
+  }
+
   $Zip
 }
 

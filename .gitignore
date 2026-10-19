@@ -38,3 +38,5 @@ docs/assignment/CanvasKanban-Viva-Speaking-Notes.pdf
 docs/assignment/CanvasKanban-Viva-Speaking-Notes.docx
 docs/assignment/.venv/
 docs/assignment/__pycache__/
+# Preview files some PDF viewers leave next to the generated documents
+docs/assignment/*.html

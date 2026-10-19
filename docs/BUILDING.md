@@ -267,6 +267,12 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
+GitHub stores a SHA-256 for every asset it keeps and reports it in its API. Both install
+scripts compare the file they downloaded with that value before they install anything, so a
+damaged or swapped download is refused; a release that carries no digest is installed with a
+message instead. The packages are not code signed, which is why a manual download shows the
+SmartScreen warning - the README says what to click.
+
 ## Troubleshooting
 
 **"Error: JavaFX runtime components are missing, and are required to run this

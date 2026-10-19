@@ -61,6 +61,26 @@ Every link above points at `releases/latest`, so they keep working for future
 versions. macOS is not packaged yet - build it from source, see
 [docs/BUILDING.md](docs/BUILDING.md).
 
+### Windows will warn you - this is why, and what to click
+
+The packages are **not code signed**. A signing certificate costs money every year, so
+Windows and your browser cannot check who built the file:
+
+| Where | What you see | What to do |
+| --- | --- | --- |
+| Browser | "is not commonly downloaded and may be dangerous" | choose **Keep** |
+| The `.msi`, or the `.exe` from the `.zip` | "Windows protected your PC" (SmartScreen) | **More info**, then **Run anyway** |
+| The `.exe` after unpacking | it refuses to start at all | right click it, **Properties**, tick **Unblock** |
+
+The warning is about the *publisher*, not the program: Windows shows it for files it
+received from the internet. The one-command installers fetch the file with PowerShell and
+curl instead of a browser, so the browser prompt above does not appear on that route.
+
+Both install scripts also **check the download against the SHA-256 that GitHub publishes
+for the file** and stop with an error if the two differ, so a damaged or swapped package
+cannot be installed by accident. Run `./install.sh` (or `./install.ps1`) instead of the
+browser link if you would like that check.
+
 ## Features
 
 - **Boards** - create, rename and delete them. A fresh install starts with one

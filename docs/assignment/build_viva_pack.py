@@ -430,12 +430,13 @@ NOTES = [
         ("\"How did you work as a team?\"", "Member 1 starts, then the others add what they worked on together"),
     ], [5.6, 4.0]),
     ("h2", "1.6 Prove it, don't only say it"),
-    ("p", "These four things turn a claim into evidence. Have them ready:"),
+    ("p", "These five things turn a claim into evidence. Have them ready:"),
     ("bullets", [
         "The test run: \"mvn test\" finishes with 67 tests and a green result.",
         "The database: show the row behind a task you just created, either with the sqlite3 command below or in a SQL client - DBeaver, SQL Workbench/J or any JDBC client, the settings are in docs/DATABASE.md.",
         "The release page: six downloadable files for Windows and Linux.",
         "The runs page: the same build and the same tests run automatically on Ubuntu and Windows.",
+        "The download: if a browser complains about the installer, explain that the packages are not code signed, and that the install scripts check the SHA-256 GitHub publishes for the file before they install it.",
     ]),
     ("code", "mvn test                                   # 67 tests\n"
              "mvn javafx:run                             # start the application\n"
@@ -536,7 +537,11 @@ NOTES = [
         ("What exactly does the user download?",
          "The DEB or RPM on Linux, the MSI or the ZIP on Windows, or the JAR if Java is already installed. The installers contain their own runtime, so Java is not needed."),
         ("What does install.sh do?",
-         "It finds the right file for the machine, verifies it, installs it and can update or remove it again; install.ps1 does the same on Windows."),
+         "It finds the right file for the machine, checks it, installs it and can update or remove it again; install.ps1 does the same on Windows."),
+        ("Windows warned that the installer is unsafe. Why?",
+         "The packages are not code signed, because a certificate costs money every year, so SmartScreen and the browser warn about a publisher they cannot identify. The README shows the one click that gets past it, and both install scripts compare the download with the SHA-256 that GitHub publishes for the file before installing anything."),
+        ("How can a download be checked?",
+         "GitHub stores a SHA-256 for every asset it keeps and reports it through its API. The script reads the value for the file it is about to install and compares it with sha256sum on Linux or Get-FileHash on Windows; if the two differ, nothing is installed."),
         ("How do you know the project still builds?",
          "Every push starts the workflow and the result is visible in the Actions tab; the release is only published when those jobs succeed."),
     ], [3.4, 6.2]),
